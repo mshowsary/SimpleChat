@@ -35,8 +35,12 @@ public class UserAccount {
      * Gets the username of a user.
      * @return the username
      */
-    public String getUsername() {
+    /**public String getUsername() {
         return "test";
+    } */
+
+    public String getUsername() {
+        return username;
     }
 
     @Override
@@ -49,7 +53,7 @@ public class UserAccount {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(username);
     }
 
     @Override

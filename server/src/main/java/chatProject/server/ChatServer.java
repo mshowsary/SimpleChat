@@ -197,6 +197,7 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
      */
     public Optional<UserAccount> findUser(String userName) {
         // Test code
+        System.out.println(userName);
         if (userName.equals("testUser")) {
             return Optional.of(new UserAccount(0, userName));
         } else {
