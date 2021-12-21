@@ -16,7 +16,7 @@ public class UserAccount {
     /**
      * The name of a user.
      */
-    private final String username;
+    private String username;
 
     public UserAccount(int id, String username) {
         this.id = id;
@@ -40,6 +40,9 @@ public class UserAccount {
     } */
 
     public String getUsername() {
+        if(this.username.equals("")){
+            this.username="test";
+        }
         return username;
     }
 

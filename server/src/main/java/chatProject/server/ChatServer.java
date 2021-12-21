@@ -91,9 +91,8 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
         server.socketThread = socketThread;
 
         //TODO: I should start the socket thread here
-
+        server.socketThread.start();
         server.checkIdleClients();
-
         return server;
     }
 
@@ -159,7 +158,6 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
         /* 1. we should end infinite loops before closing... */
 
         // 2. terminate all threads :
-
         // cleanly close the check for idle clients
         checkIdleClients.interrupt();
         // cleanly close the socket on exit
@@ -182,7 +180,7 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
     @Override
     public UserInfo login(String userName) {
         final UserInfo user = new UserInfo(
-                findUser(userName).orElse(new UserAccount(0, "test")),
+                findUser(userName).orElse(new UserAccount(0, userName)),
                 Status.ACTIVE // user just logged in - status is active
         );
         notifyUserChange(user);
@@ -197,19 +195,19 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
      */
     public Optional<UserAccount> findUser(String userName) {
         // Test code
-        System.out.println(userName);
+        /*System.out.println(userName);
         if (userName.equals("testUser")) {
             return Optional.of(new UserAccount(0, userName));
         } else {
             return Optional.empty();
-        }
+        }*/
         // Real code
-        /*
+
         return chatInstance.getUsers().keySet().stream()
                 .map(UserInfo::getAccount)
                 .filter(account -> account.getUsername().equals(userName))
                 .findAny();
-        */
+
     }
 
     /**
@@ -266,7 +264,7 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
      */
     @Override
     public Chatroom<T> getChatroom(int chatroomId) {
-        return chatInstance.getCurentChatrooms().get(0);
+        return chatInstance.getCurentChatrooms().get(chatroomId);
     }
 
     /**
@@ -282,7 +280,7 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
         final int newChatroomId = chatInstance.addChatroom(newChatroom);
 
         /* maybe I should notify clients about the new chatroom ?? */
-
+        notifyNewChatroom(newChatroom);
         return newChatroomId;
     }
 
@@ -317,7 +315,7 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
     @Override
     public Message<T> addMessage(int chatroomId, UserInfo user, T content) {
         Message<T> newMessage = getChatroom(chatroomId).addMessage(user, content);
-
+        notifyNewMessage(chatroomId,newMessage);
         // return new created message
         return newMessage;
     }
@@ -327,7 +325,7 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
      */
     @Override
     public Message<T> notifyNewMessage(int chatroomId, Message<T> newMessage) {
-
+        if(clientNotifiers==null){return newMessage;}
         clientNotifiers.forEach(
                 client -> client.notifyNewMessage(chatroomId, newMessage)
         );
