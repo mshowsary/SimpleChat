@@ -182,8 +182,9 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
      */
     @Override
     public UserInfo login(String userName) {
+        idIncr+=1;
         final UserInfo user = new UserInfo(
-                findUser(userName).orElse(new UserAccount(idIncr++, userName)),
+                findUser(userName).orElse(new UserAccount(idIncr, userName)),
                 Status.ACTIVE // user just logged in - status is active
         );
         notifyUserChange(user);
