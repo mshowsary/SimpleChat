@@ -228,16 +228,16 @@ public class ChatClient<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
     @Override
     public int addChatroom(String chatroomName, UserInfo owner) {
         try {
-            if(getCurrentChatroomNames().contains(chatroomName)){
+            /*if(getCurrentChatroomNames().contains(chatroomName)){
                 System.err.println("Cannot add existing chatroom");
                 return -1;
-            }else{
+            }else{*/
                 final String response = Request.Put(serverUrl + "/chatroom/" + chatroomName).bodyString(
                         json.toJson(owner),
                         ContentType.APPLICATION_JSON
                 ).execute().returnContent().asString();
                 return json.fromJson(response, Integer.class);
-            }
+            //}
         } catch (IOException e) {
             System.err.println("Cannot add chatroom");
             return -1;

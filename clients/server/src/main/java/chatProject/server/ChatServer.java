@@ -53,15 +53,12 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
      */
     private Thread checkIdleClients = null;
 
-    private int idIncr;
-
     public ChatServer(ChatInstance<T> chatInstance,
                       Collection<ClientNotifierInterface<T>> clientNotifiers,
                       Gson json) {
         this.chatInstance = chatInstance;
         this.clientNotifiers = clientNotifiers;
         this.json = json;
-        idIncr=0;
     }
 
     /**
@@ -182,9 +179,8 @@ public class ChatServer<T> implements UserAlgo, ChatroomAlgo<T>, MessageAlgo<T>,
      */
     @Override
     public UserInfo login(String userName) {
-        idIncr+=1;
         final UserInfo user = new UserInfo(
-                findUser(userName).orElse(new UserAccount(idIncr, userName)),
+                findUser(userName).orElse(new UserAccount(0, userName)),
                 Status.ACTIVE // user just logged in - status is active
         );
         notifyUserChange(user);
